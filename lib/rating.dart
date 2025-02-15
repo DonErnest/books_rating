@@ -1,5 +1,6 @@
 import 'package:books_rating/data/book_data.dart';
 import 'package:books_rating/models/book.dart';
+import 'package:books_rating/screens/book_detail.dart';
 import 'package:books_rating/screens/book_form.dart';
 import 'package:books_rating/screens/home.dart';
 import 'package:flutter/material.dart';
@@ -47,10 +48,22 @@ class _BookRatingState extends State<BookRating> {
     );
   }
 
+  void browseBook(Book selectedBook) {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => BookDetail(
+        book: selectedBook,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: HomeScreen(books: userBooks),
+      body: HomeScreen(
+        books: userBooks,
+        onBrowse: browseBook,
+      ),
       appBar: AppBar(
         actions: [
           IconButton(

@@ -4,13 +4,17 @@ import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
   final List<Book> books;
+  final void Function(Book book) onBrowse;
 
-  const HomeScreen({super.key, required this.books});
+  const HomeScreen({super.key, required this.books, required this.onBrowse});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemBuilder: (ctx, idx) => BookRow(book: books[idx]),
+      itemBuilder: (ctx, idx) => BookRow(
+        book: books[idx],
+        browseBookInfo: onBrowse,
+      ),
       itemCount: books.length,
     );
   }
