@@ -1,6 +1,6 @@
 import 'package:uuid/uuid.dart';
 
-int maxCount = 5;
+int maxCount = 100;
 
 const uuid = Uuid();
 

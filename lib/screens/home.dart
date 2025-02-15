@@ -26,12 +26,22 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    var counterText =
+        "Вы прочитали ${readThisYear} из ${maxCount} в этом году. Слабенько";
+
+    if (readThisYear >= maxCount) {
+      counterText = "Вы действительно прочитали столько или льстите себе? \n😏";
+    }
 
     return Column(
       children: [
         Text(
-          "Вы прочитали ${readThisYear} из ${maxCount}",
-          style: Theme.of(context).textTheme.titleLarge,
+          counterText,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleLarge!.copyWith(
+              color: readThisYear >= maxCount
+                  ? Colors.green.shade800
+                  : Colors.black),
         ),
         Expanded(
           child: ListView.builder(
