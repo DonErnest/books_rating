@@ -2,6 +2,7 @@ import 'package:books_rating/helpers/datetime.dart';
 import 'package:books_rating/models/book.dart';
 import 'package:books_rating/models/genre.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class BookForm extends StatefulWidget {
   final void Function(Book book) onBookEdited;
@@ -85,12 +86,6 @@ class _BookFormState extends State<BookForm> {
           bookName == "" ||
           bookGenre == null ||
           bookPageCount == 0) {
-        print("схуяли");
-        print(bookAuthor);
-        print(bookName);
-        print(bookGenre);
-        print(bookPageCount);
-        print(widget.existingBook);
         return;
       }
       DateTime? dateTime;
@@ -222,6 +217,10 @@ class _BookFormState extends State<BookForm> {
               decoration: const InputDecoration(
                 label: Text("Количество страниц"),
               ),
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
             ),
             DropdownMenu(
               expandedInsets: EdgeInsets.zero,

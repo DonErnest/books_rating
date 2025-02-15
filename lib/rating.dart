@@ -14,6 +14,7 @@ class BookRating extends StatefulWidget {
 
 class _BookRatingState extends State<BookRating> {
   List<Book> userBooks = [];
+  int maxCount = 5;
 
   @override
   void initState() {
@@ -25,8 +26,25 @@ class _BookRatingState extends State<BookRating> {
     final loadedBooks = await loadBooks();
     setState(() {
       userBooks = loadedBooks;
+      orderBooks();
     });
   }
+
+  void orderBooks() {
+    var thoseWhichAreRead = userBooks.where((book) => book.status == ReadingStatus.reading).toList();
+    var thoseWhichAreOnShelf = userBooks.where((book) => book.status == ReadingStatus.onShelf).toList();
+    var thoseWhichAreOnHold = userBooks.where((book) => book.status == ReadingStatus.onHold).toList();
+    var thoseWhichAreFinished = userBooks.where((book) => book.status == ReadingStatus.finished).toList();
+
+    userBooks = thoseWhichAreRead + thoseWhichAreOnShelf + thoseWhichAreOnHold + thoseWhichAreFinished;
+  }
+
+  int get readThisYear => userBooks
+      .where((book) =>
+          book.status == ReadingStatus.finished &&
+              DateTime.now().difference(book.finishedOn!).inDays <
+              Duration(days: 365).inDays)
+      .length;
 
   void addBook(Book newBook) {
     setState(() {
@@ -55,7 +73,6 @@ class _BookRatingState extends State<BookRating> {
     });
   }
 
-
   void openEditBookSheet(String id) {
     final existingBook = userBooks.firstWhere((book) => book.id == id);
 
@@ -67,7 +84,6 @@ class _BookRatingState extends State<BookRating> {
       ),
     );
   }
-
 
   void browseBook(Book selectedBook) {
     showModalBottomSheet(
@@ -94,6 +110,7 @@ class _BookRatingState extends State<BookRating> {
         onCancel: removeBook,
       ),
       appBar: AppBar(
+        title: Text("Вы прочитали ${readThisYear} из ${maxCount}"),
         actions: [
           IconButton(
             onPressed: openAddBoolSheet,
