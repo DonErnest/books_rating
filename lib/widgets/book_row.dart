@@ -8,6 +8,19 @@ class BookRow extends StatelessWidget {
 
   const BookRow({super.key, required this.book, required this.browseBookInfo});
 
+  Color getColorThemeForStatus(ReadingStatus status) {
+    switch (status) {
+      case ReadingStatus.onShelf:
+        return Colors.grey.shade900;
+      case ReadingStatus.reading:
+        return Colors.blue.shade800;
+      case ReadingStatus.finished:
+        return Colors.green.shade900;
+      case ReadingStatus.onHold:
+        return Colors.red.shade700;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var coreInfo = [
@@ -16,21 +29,43 @@ class BookRow extends StatelessWidget {
         children: [
           Text(
             book.displayInfo,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: Theme.of(context).textTheme.titleLarge,
           )
         ],
       ),
       Row(
-        children: [Spacer(), Text(book.author)],
+        children: [
+          Spacer(),
+          Text(
+            book.author,
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: getColorThemeForStatus(book.status)),
+          )
+        ],
       ),
       Row(
-        children: [Spacer(), Text(book.status.displayStatus)],
+        children: [
+          Spacer(),
+          Text(
+            book.status.displayStatus,
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: getColorThemeForStatus(book.status)),
+          )
+        ],
       )
     ];
 
     if (book.status == ReadingStatus.finished) {
       coreInfo.add(Row(
-        children: [Spacer(), Text("Закончена ${formatDate(book.finishedOn!)}")],
+        children: [
+          Spacer(),
+          Text("Закончена ${formatDate(book.finishedOn!)}",
+              style: TextStyle(color: Colors.green.shade900))
+        ],
       ));
     }
 

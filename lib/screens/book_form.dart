@@ -61,19 +61,19 @@ class _BookFormState extends State<BookForm> {
       bookGenreController.text = getGenreById(existingBook.genreId).name;
       bookGenre = getGenreById(existingBook.genreId);
 
-      existingBook.rate != null? _bookRatingButtonSelection = {existingBook.rate!}: <int>{};
+      existingBook.rate != null
+          ? _bookRatingButtonSelection = {existingBook.rate!}
+          : <int>{};
 
       bookFinishedOnDate = existingBook.finishedOn;
       if (bookFinishedOnDate != null) {
         bookFinishedOnTime = TimeOfDay.fromDateTime(bookFinishedOnDate!);
       }
-
     }
     if (bookFinishedOnDate != null) {
       bookFinishedOnDateController.text = formatDate(bookFinishedOnDate!);
       bookFinishedOnTimeController.text = formatTime(bookFinishedOnTime!);
     }
-
   }
 
   void onCanceled() {
@@ -88,6 +88,11 @@ class _BookFormState extends State<BookForm> {
           bookPageCount == 0) {
         return;
       }
+      if (bookStatus == ReadingStatus.finished &&
+          (bookFinishedOnDate == null || bookFinishedOnTime == null)) {
+        return;
+      }
+
       DateTime? dateTime;
       if (bookFinishedOnDate != null && bookFinishedOnTime != null) {
         dateTime = DateTime(
@@ -99,6 +104,17 @@ class _BookFormState extends State<BookForm> {
         );
       }
 
+      // if user decides to change status of finished book, it's better to flush rating then
+      int? bookRating;
+      if (bookStatus != ReadingStatus.finished) {
+        bookRating = null;
+        dateTime = null;
+      } else {
+        bookRating = _bookRatingButtonSelection.isNotEmpty
+            ? _bookRatingButtonSelection.first
+            : null;
+      }
+
       final book = Book(
         id: widget.existingBook?.id,
         author: bookAuthorController.text.trim(),
@@ -107,9 +123,9 @@ class _BookFormState extends State<BookForm> {
         pageCount: int.parse(bookPageCountController.text),
         status: bookStatus,
         finishedOn: dateTime,
-        rate: _bookRatingButtonSelection.isNotEmpty? _bookRatingButtonSelection.first: null,
+        rate: bookRating,
       );
-      print(book);
+
       widget.onBookEdited(book);
       Navigator.pop(context);
     });
@@ -136,8 +152,8 @@ class _BookFormState extends State<BookForm> {
   void onTimeTap() async {
     final pickedTime = await showTimePicker(
       context: context,
-      initialTime: bookFinishedOnTime != null ? bookFinishedOnTime! : TimeOfDay
-          .now(),
+      initialTime:
+          bookFinishedOnTime != null ? bookFinishedOnTime! : TimeOfDay.now(),
     );
 
     if (pickedTime != null) {
@@ -163,10 +179,7 @@ class _BookFormState extends State<BookForm> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final bottomInset = MediaQuery
-        .of(context)
-        .viewInsets
-        .bottom;
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
       width: double.infinity,
@@ -196,17 +209,15 @@ class _BookFormState extends State<BookForm> {
               inputDecorationTheme: theme.inputDecorationTheme,
               dropdownMenuEntries: allGenres
                   .map(
-                    (genre) =>
-                    DropdownMenuEntry(
+                    (genre) => DropdownMenuEntry(
                       value: genre.id,
                       label: genre.name,
                     ),
-              )
+                  )
                   .toList(),
-              onSelected: (value) =>
-                  setState(() {
-                    value != null ? bookGenre = getGenreById(value) : null;
-                  }),
+              onSelected: (value) => setState(() {
+                value != null ? bookGenre = getGenreById(value) : null;
+              }),
               controller: bookGenreController,
             ),
             TextField(
@@ -228,21 +239,19 @@ class _BookFormState extends State<BookForm> {
               inputDecorationTheme: theme.inputDecorationTheme,
               dropdownMenuEntries: ReadingStatus.values
                   .map(
-                    (status) =>
-                    DropdownMenuEntry(
+                    (status) => DropdownMenuEntry(
                       value: status,
                       label: status.displayStatus,
                     ),
-              )
+                  )
                   .toList(),
-              onSelected: (value) =>
-                  setState(() {
-                    bookStatus = value!;
-                  }),
+              onSelected: (value) => setState(() {
+                bookStatus = value!;
+              }),
               controller: bookStatusController,
             ),
             IgnorePointer(
-              ignoring: bookStatus == ReadingStatus.finished? false: true,
+              ignoring: bookStatus == ReadingStatus.finished ? false : true,
               child: Row(
                 children: [
                   Expanded(
@@ -271,16 +280,16 @@ class _BookFormState extends State<BookForm> {
               ),
             ),
             IgnorePointer(
-              ignoring: bookStatus == ReadingStatus.finished? false: true,
+              ignoring: bookStatus == ReadingStatus.finished ? false : true,
               child: SegmentedButton<int>(
-                  segments: [1, 2, 3, 4, 5]
-                  .map<ButtonSegment<int>>((value) =>
-                  ButtonSegment(value: value, label: Text(value.toString())))
-                  .toList(),
-                  selected: _bookRatingButtonSelection,
-                  multiSelectionEnabled: false,
-                  emptySelectionAllowed: true,
-                  onSelectionChanged: (newSelection) {
+                segments: [1, 2, 3, 4, 5]
+                    .map<ButtonSegment<int>>((value) => ButtonSegment(
+                        value: value, label: Text(value.toString())))
+                    .toList(),
+                selected: _bookRatingButtonSelection,
+                multiSelectionEnabled: false,
+                emptySelectionAllowed: true,
+                onSelectionChanged: (newSelection) {
                   setState(() {
                     _bookRatingButtonSelection = newSelection;
                   });

@@ -11,53 +11,110 @@ class BookDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       child: Column(
         children: [
           Row(
             children: [
-              Expanded(child: Text("Автор")),
-              Spacer(),
-              Expanded(child: Text(book.author))
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(child: Text("Название")),
-              Spacer(),
-              Expanded(child: Text(book.name))
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(child: Text("Жанр")),
-              Spacer(),
-              Expanded(child: Text(getGenreById(book.genreId).name))
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(child: Text("Статус")),
-              Spacer(),
-              Expanded(child: Text(book.status.displayStatus))
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(child: Text("Прочтена")),
-              Spacer(),
               Expanded(
-                  child: Text(book.finishedOn != null
-                      ? formatDateTime(book.finishedOn!)
-                      : "не прочтена"))
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(child: Text("Оценка")),
-              Spacer(),
-              Expanded(
+                flex: 1,
                   child: Text(
-                      book.rate != null ? book.rate.toString() : "нет оценки"))
+                "Автор",
+                style: Theme.of(context).textTheme.titleLarge,
+              )),
+              Expanded(
+                flex: 2,
+                  child: Text(
+                book.author,
+                style: Theme.of(context).textTheme.titleLarge,
+              ))
+            ],
+          ),
+          Divider(),
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                  child: Text(
+                "Название",
+                style: Theme.of(context).textTheme.titleLarge,
+              )),
+              Expanded(
+                flex: 2,
+                  child: Text(
+                book.name,
+                style: Theme.of(context).textTheme.titleLarge,
+              ))
+            ],
+          ),
+          Divider(),
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                  child: Text(
+                "Жанр",
+                style: Theme.of(context).textTheme.titleLarge,
+              )),
+              Expanded(
+                flex: 2,
+                  child: Text(
+                getGenreById(book.genreId).name,
+                style: Theme.of(context).textTheme.titleLarge,
+              ))
+            ],
+          ),
+          Divider(),
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                  child: Text(
+                "Статус",
+                style: Theme.of(context).textTheme.titleLarge,
+              )),
+              Expanded(
+                flex: 2,
+                  child: Text(
+                book.status.displayStatus,
+                style: Theme.of(context).textTheme.titleLarge,
+              ))
+            ],
+          ),
+          Divider(),
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                  child: Text(
+                "Прочтена",
+                style: Theme.of(context).textTheme.titleLarge,
+              )),
+              Expanded(
+                flex: 2,
+                  child: Text(
+                book.finishedOn != null
+                    ? formatDateTime(book.finishedOn!)
+                    : "не прочтена",
+                style: Theme.of(context).textTheme.titleLarge,
+              ))
+            ],
+          ),
+          Divider(),
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                  child: Text(
+                "Оценка",
+                style: Theme.of(context).textTheme.titleLarge,
+              )),
+              Expanded(
+                flex: 2,
+                  child: Text(
+                book.rate != null ? book.rate.toString() : "нет оценки",
+                style: Theme.of(context).textTheme.titleLarge,
+              ))
             ],
           ),
         ],

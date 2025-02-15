@@ -1,5 +1,7 @@
 import 'package:uuid/uuid.dart';
 
+int maxCount = 5;
+
 const uuid = Uuid();
 
 enum ReadingStatus {

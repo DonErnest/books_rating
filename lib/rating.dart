@@ -14,7 +14,7 @@ class BookRating extends StatefulWidget {
 
 class _BookRatingState extends State<BookRating> {
   List<Book> userBooks = [];
-  int maxCount = 5;
+  final dropDownFilterController = TextEditingController();
 
   @override
   void initState() {
@@ -31,20 +31,23 @@ class _BookRatingState extends State<BookRating> {
   }
 
   void orderBooks() {
-    var thoseWhichAreRead = userBooks.where((book) => book.status == ReadingStatus.reading).toList();
-    var thoseWhichAreOnShelf = userBooks.where((book) => book.status == ReadingStatus.onShelf).toList();
-    var thoseWhichAreOnHold = userBooks.where((book) => book.status == ReadingStatus.onHold).toList();
-    var thoseWhichAreFinished = userBooks.where((book) => book.status == ReadingStatus.finished).toList();
+    var thoseWhichAreRead = userBooks
+        .where((book) => book.status == ReadingStatus.reading)
+        .toList();
+    var thoseWhichAreOnShelf = userBooks
+        .where((book) => book.status == ReadingStatus.onShelf)
+        .toList();
+    var thoseWhichAreOnHold =
+        userBooks.where((book) => book.status == ReadingStatus.onHold).toList();
+    var thoseWhichAreFinished = userBooks
+        .where((book) => book.status == ReadingStatus.finished)
+        .toList();
 
-    userBooks = thoseWhichAreRead + thoseWhichAreOnShelf + thoseWhichAreOnHold + thoseWhichAreFinished;
+    userBooks = thoseWhichAreRead +
+        thoseWhichAreOnShelf +
+        thoseWhichAreOnHold +
+        thoseWhichAreFinished;
   }
-
-  int get readThisYear => userBooks
-      .where((book) =>
-          book.status == ReadingStatus.finished &&
-              DateTime.now().difference(book.finishedOn!).inDays <
-              Duration(days: 365).inDays)
-      .length;
 
   void addBook(Book newBook) {
     setState(() {
@@ -100,8 +103,25 @@ class _BookRatingState extends State<BookRating> {
     });
   }
 
+  void filterBooks(String? status) async {
+    if (status != null) {
+      final loadedBooks = await loadBooks();
+      if (status == "ALL") {
+        setState(() {
+          userBooks = loadedBooks;
+          orderBooks();
+        });
+      } else {
+        setState(() {
+          userBooks = loadedBooks.where((book) => book.status.toString() == status).toList();
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       body: HomeScreen(
         books: userBooks,
@@ -110,8 +130,21 @@ class _BookRatingState extends State<BookRating> {
         onCancel: removeBook,
       ),
       appBar: AppBar(
-        title: Text("Вы прочитали ${readThisYear} из ${maxCount}"),
         actions: [
+          DropdownMenu<String>(
+            controller: dropDownFilterController,
+            inputDecorationTheme: theme.inputDecorationTheme,
+            dropdownMenuEntries: [
+                  DropdownMenuEntry(value: "ALL", label: "Все"),
+                ] +
+                ReadingStatus.values
+                    .map<DropdownMenuEntry<String>>((status) =>
+                        DropdownMenuEntry(
+                            value: status.toString(),
+                            label: status.displayStatus))
+                    .toList(),
+            onSelected: filterBooks,
+          ),
           IconButton(
             onPressed: openAddBoolSheet,
             icon: const Icon(Icons.add),
