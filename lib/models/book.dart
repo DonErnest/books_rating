@@ -22,7 +22,7 @@ class Book {
   final int pageCount;
   final ReadingStatus status;
   final DateTime? finishedOn;
-  final int rate;
+  final int? rate;
 
   Book({String? id,
     required this.author,
@@ -31,7 +31,7 @@ class Book {
     required this.pageCount,
     required this.status,
     this.finishedOn,
-    required this.rate})
+    this.rate})
       : id = id ?? uuid.v4();
 
   String get displayInfo => "'${this.name}' ${this.author} - ${this.status.displayStatus}";
