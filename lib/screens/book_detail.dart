@@ -14,22 +14,51 @@ class BookDetail extends StatelessWidget {
       child: Column(
         children: [
           Row(
-            children: [Expanded(child: Text("Автор")), Spacer(), Expanded(child: Text(book.author))],
+            children: [
+              Expanded(child: Text("Автор")),
+              Spacer(),
+              Expanded(child: Text(book.author))
+            ],
           ),
           Row(
-            children: [Expanded(child: Text("Название")), Spacer(), Expanded(child: Text(book.name))],
+            children: [
+              Expanded(child: Text("Название")),
+              Spacer(),
+              Expanded(child: Text(book.name))
+            ],
           ),
           Row(
-            children: [Expanded(child: Text("Жанр")), Spacer(), Expanded(child: Text(getGenreById(book.genreId).name))],
+            children: [
+              Expanded(child: Text("Жанр")),
+              Spacer(),
+              Expanded(child: Text(getGenreById(book.genreId).name))
+            ],
           ),
           Row(
-            children: [Expanded(child: Text("Статус")), Spacer(), Expanded(child: Text(book.status.displayStatus))],
+            children: [
+              Expanded(child: Text("Статус")),
+              Spacer(),
+              Expanded(child: Text(book.status.displayStatus))
+            ],
           ),
           Row(
-            children: [Expanded(child: Text("Прочтена")), Spacer(), Expanded(child: Text(book.finishedOn != null? formatDateTime(book.finishedOn!): "не прочтена"))],
+            children: [
+              Expanded(child: Text("Прочтена")),
+              Spacer(),
+              Expanded(
+                  child: Text(book.finishedOn != null
+                      ? formatDateTime(book.finishedOn!)
+                      : "не прочтена"))
+            ],
           ),
           Row(
-            children: [Expanded(child: Text("Оценка")), Spacer(), Expanded(child: Text(book.rate != null? book.rate.toString() : "нет оценки"))],
+            children: [
+              Expanded(child: Text("Оценка")),
+              Spacer(),
+              Expanded(
+                  child: Text(
+                      book.rate != null ? book.rate.toString() : "нет оценки"))
+            ],
           ),
         ],
       ),

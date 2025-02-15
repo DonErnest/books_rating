@@ -4,9 +4,10 @@ import 'package:books_rating/models/genre.dart';
 import 'package:flutter/material.dart';
 
 class BookForm extends StatefulWidget {
-  final void Function(Book book) onBookAdded;
+  final void Function(Book book) onBookEdited;
+  final Book? existingBook;
 
-  const BookForm({super.key, required this.onBookAdded});
+  const BookForm({super.key, required this.onBookEdited, this.existingBook});
 
   @override
   State<BookForm> createState() => _BookFormState();
@@ -40,6 +41,38 @@ class _BookFormState extends State<BookForm> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.existingBook != null) {
+      final existingBook = widget.existingBook!;
+
+      bookAuthorController.text = existingBook.author;
+      bookAuthor = existingBook.author;
+
+      bookNameController.text = existingBook.name;
+      bookName = existingBook.name;
+
+      bookPageCountController.text = existingBook.pageCount.toString();
+      bookPageCount = existingBook.pageCount;
+
+      bookStatusController.text = existingBook.status.displayStatus;
+      bookStatus = existingBook.status;
+
+      bookGenreController.text = getGenreById(existingBook.genreId).name;
+      bookGenre = getGenreById(existingBook.genreId);
+
+      existingBook.rate != null? _bookRatingButtonSelection = {existingBook.rate!}: <int>{};
+
+      bookFinishedOnDate = existingBook.finishedOn;
+      if (bookFinishedOnDate != null) {
+        bookFinishedOnTime = TimeOfDay.fromDateTime(bookFinishedOnDate!);
+      }
+
+    }
+    if (bookFinishedOnDate != null) {
+      bookFinishedOnDateController.text = formatDate(bookFinishedOnDate!);
+      bookFinishedOnTimeController.text = formatTime(bookFinishedOnTime!);
+    }
+
   }
 
   void onCanceled() {
@@ -52,6 +85,12 @@ class _BookFormState extends State<BookForm> {
           bookName == "" ||
           bookGenre == null ||
           bookPageCount == 0) {
+        print("схуяли");
+        print(bookAuthor);
+        print(bookName);
+        print(bookGenre);
+        print(bookPageCount);
+        print(widget.existingBook);
         return;
       }
       DateTime? dateTime;
@@ -66,15 +105,17 @@ class _BookFormState extends State<BookForm> {
       }
 
       final book = Book(
-        author: bookAuthor,
-        name: bookName,
+        id: widget.existingBook?.id,
+        author: bookAuthorController.text.trim(),
+        name: bookNameController.text.trim(),
         genreId: bookGenre!.id,
-        pageCount: bookPageCount,
+        pageCount: int.parse(bookPageCountController.text),
         status: bookStatus,
         finishedOn: dateTime,
         rate: _bookRatingButtonSelection.isNotEmpty? _bookRatingButtonSelection.first: null,
       );
-      widget.onBookAdded(book);
+      print(book);
+      widget.onBookEdited(book);
       Navigator.pop(context);
     });
   }

@@ -39,7 +39,7 @@ Future<List<Book>> loadBooks() async {
           genreId: bookMap["genreId"],
           pageCount: bookMap["pageCount"],
           status: getStatusFromString(bookMap["status"]),
-          finishedOn: bookMap["finishedOn"]? DateTime.parse(bookMap["finishedOn"]) : null,
+          finishedOn: bookMap["finishedOn"] != null ? DateTime.parse(bookMap["finishedOn"]) : null,
           rate: bookMap["rate"]
         )
     ).toList();

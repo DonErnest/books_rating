@@ -42,11 +42,32 @@ class _BookRatingState extends State<BookRating> {
       isScrollControlled: true,
       builder: (ctx) => Wrap(children: [
         BookForm(
-          onBookAdded: addBook,
+          onBookEdited: addBook,
         ),
       ]),
     );
   }
+
+  void editBook(Book editedBook) {
+    setState(() {
+      final idx = userBooks.indexWhere((book) => book.id == editedBook.id);
+      userBooks[idx] = editedBook;
+    });
+  }
+
+
+  void openEditBookSheet(String id) {
+    final existingBook = userBooks.firstWhere((book) => book.id == id);
+
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => BookForm(
+        onBookEdited: editBook,
+        existingBook: existingBook,
+      ),
+    );
+  }
+
 
   void browseBook(Book selectedBook) {
     showModalBottomSheet(
@@ -57,12 +78,20 @@ class _BookRatingState extends State<BookRating> {
     );
   }
 
+  void removeBook(Book book) {
+    setState(() {
+      userBooks.remove(book);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: HomeScreen(
         books: userBooks,
         onBrowse: browseBook,
+        onEdit: openEditBookSheet,
+        onCancel: removeBook,
       ),
       appBar: AppBar(
         actions: [
