@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 const uuid = Uuid();
@@ -34,5 +33,5 @@ class Book {
     this.rate})
       : id = id ?? uuid.v4();
 
-  String get displayInfo => "'${this.name}' ${this.author} - ${this.status.displayStatus}";
+  String get displayInfo => "${this.name}";
 }
