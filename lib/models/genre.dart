@@ -15,3 +15,7 @@ var detective = Genre(id: 5, name: "Детектив");
 List<Genre> allGenres = [
   scienceFiction, compScience, nonFiction, classic, detective
 ];
+
+Genre getGenreById(int id) {
+  return allGenres.firstWhere((genre) => genre.id == id);
+}

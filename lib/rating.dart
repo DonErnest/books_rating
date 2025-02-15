@@ -1,5 +1,7 @@
 import 'package:books_rating/data/book_data.dart';
 import 'package:books_rating/models/book.dart';
+import 'package:books_rating/screens/book_form.dart';
+import 'package:books_rating/screens/home.dart';
 import 'package:flutter/material.dart';
 
 class BookRating extends StatefulWidget {
@@ -25,8 +27,38 @@ class _BookRatingState extends State<BookRating> {
     });
   }
 
+  void addBook(Book newBook) {
+    setState(() {
+      userBooks.add(newBook);
+    });
+    saveBooks(userBooks);
+  }
+
+  void openAddBoolSheet() {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      builder: (ctx) => Wrap(children: [
+        BookForm(
+          onBookAdded: addBook,
+        ),
+      ]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      body: HomeScreen(books: userBooks),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: openAddBoolSheet,
+            icon: const Icon(Icons.add),
+          )
+        ],
+      ),
+    );
   }
 }

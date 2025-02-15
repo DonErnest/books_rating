@@ -10,6 +10,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemBuilder: (ctx, idx) => BookRow(book: books[idx]));
+      itemBuilder: (ctx, idx) => BookRow(book: books[idx]),
+      itemCount: books.length,
+    );
   }
 }
