@@ -13,6 +13,16 @@ enum ReadingStatus {
   const ReadingStatus(this.displayStatus);
 }
 
+ReadingStatus getStatusFromString(String statusAsString) {
+  for (var status in ReadingStatus.values) {
+    if (status.toString() == statusAsString) {
+      return status;
+    }
+  }
+  return ReadingStatus.onShelf;
+}
+
+
 class Book {
   late final String id;
   final String author;

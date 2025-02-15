@@ -16,7 +16,7 @@ Future<void> saveBooks(List<Book> books) async {
         'name': book.name,
         'genreId': book.genreId,
         'pageCount': book.pageCount,
-        'status': book.status,
+        'status': book.status.toString(),
         'rate': book.rate,
         'finishedOn': book.finishedOn?.toIso8601String(),
     }
@@ -27,7 +27,7 @@ Future<void> saveBooks(List<Book> books) async {
 
 Future<List<Book>> loadBooks() async {
   try {
-    final filePath = await getDataFilePath("dreams");
+    final filePath = await getDataFilePath("books");
     final file = File(filePath);
     final jsonContents = await file.readAsString();
     final booksMaps = jsonDecode(jsonContents) as List<dynamic>;
@@ -38,7 +38,7 @@ Future<List<Book>> loadBooks() async {
           name: bookMap["name"],
           genreId: bookMap["genreId"],
           pageCount: bookMap["pageCount"],
-          status: bookMap["status"],
+          status: getStatusFromString(bookMap["status"]),
           finishedOn: bookMap["finishedOn"]? DateTime.parse(bookMap["finishedOn"]) : null,
           rate: bookMap["rate"]
         )

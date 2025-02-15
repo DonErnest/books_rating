@@ -35,7 +35,7 @@ class _BookFormState extends State<BookForm> {
   final bookFinishedOnTimeController = TextEditingController();
 
   int? bookRating;
-  final bookRatingController = TextEditingController();
+  Set<int> _bookRatingButtonSelection = <int>{};
 
   @override
   void initState() {
@@ -72,7 +72,7 @@ class _BookFormState extends State<BookForm> {
         pageCount: bookPageCount,
         status: bookStatus,
         finishedOn: dateTime,
-        rate: bookRating,
+        rate: _bookRatingButtonSelection.isNotEmpty? _bookRatingButtonSelection.first: null,
       );
       widget.onBookAdded(book);
       Navigator.pop(context);
@@ -81,14 +81,12 @@ class _BookFormState extends State<BookForm> {
 
   void onDateTap() async {
     final now = DateTime.now();
-    // it's better not to plan task for more than 2 week sprint
-    final lastDate = DateTime(now.year, now.month, now.day + 14);
 
     final dateFromUser = await showDatePicker(
       context: context,
       initialDate: bookFinishedOnDate,
-      firstDate: now,
-      lastDate: lastDate,
+      firstDate: now.subtract(Duration(days: 365 * 10)),
+      lastDate: now,
     );
 
     if (dateFromUser != null) {
@@ -102,7 +100,8 @@ class _BookFormState extends State<BookForm> {
   void onTimeTap() async {
     final pickedTime = await showTimePicker(
       context: context,
-      initialTime: bookFinishedOnTime != null? bookFinishedOnTime! : TimeOfDay.now(),
+      initialTime: bookFinishedOnTime != null ? bookFinishedOnTime! : TimeOfDay
+          .now(),
     );
 
     if (pickedTime != null) {
@@ -122,14 +121,16 @@ class _BookFormState extends State<BookForm> {
     bookPageCountController.dispose();
     bookFinishedOnDateController.dispose();
     bookFinishedOnTimeController.dispose();
-    bookRatingController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final bottomInset = MediaQuery
+        .of(context)
+        .viewInsets
+        .bottom;
 
     return Container(
       width: double.infinity,
@@ -159,20 +160,23 @@ class _BookFormState extends State<BookForm> {
               inputDecorationTheme: theme.inputDecorationTheme,
               dropdownMenuEntries: allGenres
                   .map(
-                    (genre) => DropdownMenuEntry(
-                  value: genre.id,
-                  label: genre.name,
-                ),
+                    (genre) =>
+                    DropdownMenuEntry(
+                      value: genre.id,
+                      label: genre.name,
+                    ),
               )
                   .toList(),
-              onSelected: (value) => setState(() {
-                value != null? bookGenre = getGenreById(value) : null;
-              }),
+              onSelected: (value) =>
+                  setState(() {
+                    value != null ? bookGenre = getGenreById(value) : null;
+                  }),
               controller: bookGenreController,
             ),
             TextField(
               controller: bookPageCountController,
-              onChanged: (value) => setState(() => bookPageCount = int.parse(value)),
+              onChanged: (value) =>
+                  setState(() => bookPageCount = int.parse(value)),
               maxLines: 1,
               decoration: const InputDecoration(
                 label: Text("Количество страниц"),
@@ -184,42 +188,64 @@ class _BookFormState extends State<BookForm> {
               inputDecorationTheme: theme.inputDecorationTheme,
               dropdownMenuEntries: ReadingStatus.values
                   .map(
-                    (status) => DropdownMenuEntry(
-                  value: status,
-                  label: status.displayStatus,
-                ),
+                    (status) =>
+                    DropdownMenuEntry(
+                      value: status,
+                      label: status.displayStatus,
+                    ),
               )
                   .toList(),
-              onSelected: (value) => setState(() {
-                value = bookStatus;
-              }),
-              controller: bookGenreController,
+              onSelected: (value) =>
+                  setState(() {
+                    bookStatus = value!;
+                  }),
+              controller: bookStatusController,
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    onTap: onDateTap,
-                    readOnly: true,
-                    controller: bookFinishedOnDateController,
-                    decoration: InputDecoration(
-                      label: Text('Дата прочтения'),
+            IgnorePointer(
+              ignoring: bookStatus == ReadingStatus.finished? false: true,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      onTap: onDateTap,
+                      readOnly: true,
+                      controller: bookFinishedOnDateController,
+                      decoration: InputDecoration(
+                        label: Text('Дата прочтения'),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(width: 16),
-                SizedBox(
-                  width: 100,
-                  child: TextField(
-                    onTap: onTimeTap,
-                    readOnly: true,
-                    controller: bookFinishedOnTimeController,
-                    decoration: InputDecoration(
-                      label: Text('Время прочтения'),
+                  SizedBox(width: 16),
+                  SizedBox(
+                    width: 100,
+                    child: TextField(
+                      onTap: onTimeTap,
+                      readOnly: true,
+                      controller: bookFinishedOnTimeController,
+                      decoration: InputDecoration(
+                        label: Text('Время прочтения'),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ),
+            IgnorePointer(
+              ignoring: bookStatus == ReadingStatus.finished? false: true,
+              child: SegmentedButton<int>(
+                  segments: [1, 2, 3, 4, 5]
+                  .map<ButtonSegment<int>>((value) =>
+                  ButtonSegment(value: value, label: Text(value.toString())))
+                  .toList(),
+                  selected: _bookRatingButtonSelection,
+                  multiSelectionEnabled: false,
+                  emptySelectionAllowed: true,
+                  onSelectionChanged: (newSelection) {
+                  setState(() {
+                    _bookRatingButtonSelection = newSelection;
+                  });
+                },
+              ),
             ),
             Row(
               children: [
